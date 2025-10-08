@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'models/categorymodel.dart';
 import 'models/productmodel.dart';
 import 'product_detail_page.dart';
 
-class CategoryDetailPage extends StatelessWidget {
+class CategoryDetailPage extends StatefulWidget {
   final Category category;
   final List<Product> products;
 
@@ -14,10 +15,15 @@ class CategoryDetailPage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CategoryDetailPage> createState() => _CategoryDetailPageState();
+}
+
+class _CategoryDetailPageState extends State<CategoryDetailPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(category.name),
+        title: Text(widget.category.name),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -29,7 +35,7 @@ class CategoryDetailPage extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
-                      category.assetImage, // Ganti dari image ke assetImage
+                      widget.category.assetImage, // Ganti dari image ke assetImage
                       width: 200,
                       height: 200,
                       fit: BoxFit.cover,
@@ -37,13 +43,13 @@ class CategoryDetailPage extends StatelessWidget {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    category.info,
+                    widget.category.info,
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16),
                   Text(
-                    category.description,
+                    widget.category.description,
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -54,7 +60,7 @@ class CategoryDetailPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
-                'Produk ${category.name}',
+                'Produk ${widget.category.name}',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -65,9 +71,9 @@ class CategoryDetailPage extends StatelessWidget {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: products.length,
+              itemCount: widget.products.length,
               itemBuilder: (context, index) {
-                final p = products[index];
+                final p = widget.products[index];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 3,

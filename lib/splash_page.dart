@@ -1,8 +1,31 @@
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'login_page.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 5), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => LoginPage(
+            onLogin: (email) {},
+            onRegister: () {},
+          ),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +111,9 @@ class SplashPage extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 32),
-                        CircularProgressIndicator(
-                          color: Colors.blue.shade700,
+                        LoadingAnimationWidget.threeArchedCircle(
+                           color: const Color.fromARGB(255, 6, 4, 139),
+                           size: 100
                         ),
                       ],
                     ),

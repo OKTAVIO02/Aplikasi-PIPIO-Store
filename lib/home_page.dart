@@ -5,6 +5,7 @@ import 'product_detail_page.dart';
 import 'profile_page.dart';
 import 'category_detail_page.dart';
 
+
 class HomePage extends StatelessWidget {
   final String email;
   final VoidCallback onLogout;
@@ -70,6 +71,7 @@ class HomePage extends StatelessWidget {
       description: 'Jaket hoodie hangat dan stylish.',
       image: 'assets/jaket hoodie.png',
       price: 150000,
+
     ),
     Product(
       name: 'Jaket Bomber',
