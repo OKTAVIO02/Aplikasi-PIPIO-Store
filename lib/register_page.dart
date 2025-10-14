@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback onRegisterDone;
@@ -143,7 +144,39 @@ class _RegisterPageState extends State<RegisterPage> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: ElevatedButton(
-                              onPressed: widget.onRegisterDone,
+                              onPressed: () async {
+                                String email = _emailController.text.trim();
+                                String password = _passController.text;
+
+                                if (email.isEmpty || password.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Email dan password wajib diisi!')),
+                                  );
+                                  return;
+                                }
+                                if (!email.contains('@')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Email tidak valid!')),
+                                  );
+                                  return;
+                                }
+                                if (password.length < 4) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Password minimal 4 karakter!')),
+                                  );
+                                  return;
+                                }
+
+                                final prefs = await SharedPreferences.getInstance();
+                                await prefs.setString('saved_email', email);
+                                await prefs.setString('saved_password', password);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+                                );
+
+                                widget.onRegisterDone();
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,

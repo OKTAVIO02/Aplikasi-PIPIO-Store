@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import 'home_page.dart';
@@ -33,6 +34,21 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Aplikasi PIPIO Store',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).apply(
+          bodyColor: Colors.black87,
+          displayColor: Colors.black87,
+        ),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
       home: _showSplash
           ? const SplashPage()
           : (_email == null
@@ -68,4 +84,4 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
     );
   }
-}
+}  

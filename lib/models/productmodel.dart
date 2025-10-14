@@ -1,3 +1,5 @@
+import '../utils/formatters.dart';
+
 class Product {
   // Encapsulation: private fields
   String _name;
@@ -33,7 +35,7 @@ class Product {
   set rating(double value) => _rating = value;
 
   // Polymorphism: info bisa dioverride
-  String get info => '$name: $description - Rp${price.toStringAsFixed(0)}';
+  String get info => '$name: $description - ${formatCurrency(price)}';
 }
 
 // Inheritance & Polymorphism
@@ -62,5 +64,5 @@ class DiscountProduct extends Product {
 
   @override
   String get info =>
-      '$name (Diskon ${discount.toStringAsFixed(0)}%): $description - Rp${discountedPrice.toStringAsFixed(0)}';
+    '$name (Diskon ${discount.toStringAsFixed(0)}%): $description - ${formatCurrency(discountedPrice)}';
 }

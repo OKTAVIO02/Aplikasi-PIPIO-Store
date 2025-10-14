@@ -29,7 +29,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( 
       body: Stack(
         children: [
           Positioned.fill(
@@ -113,7 +113,7 @@ class _SplashPageState extends State<SplashPage> {
                         SizedBox(height: 32),
                         LoadingAnimationWidget.threeArchedCircle(
                            color: const Color.fromARGB(255, 6, 4, 139),
-                           size: 100
+                           size: 20
                         ),
                       ],
                     ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'models/productmodel.dart';
+import 'utils/formatters.dart';
+import 'services/cart_service.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product product;
@@ -55,8 +57,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             const SizedBox(height: 16),
             Text(
               widget.product is DiscountProduct
-                  ? 'Harga: Rp${(widget.product as DiscountProduct).discountedPrice.toStringAsFixed(0)} (Diskon ${(widget.product as DiscountProduct).discount.toStringAsFixed(0)}%)'
-                  : 'Harga: Rp${widget.product.price.toStringAsFixed(0)}',
+                  ? 'Harga: ${formatCurrency((widget.product as DiscountProduct).discountedPrice)} (Diskon ${(widget.product as DiscountProduct).discount.toStringAsFixed(0)}%)'
+                  : 'Harga: ${formatCurrency(widget.product.price)}',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.blue.shade700,
@@ -84,11 +86,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
+                CartService.instance.add(widget.product);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Berhasil membeli ${widget.product.name}')),
+                  SnackBar(content: Text('${widget.product.name} ditambahkan ke keranjang')),
                 );
               },
-              child: const Text('Beli Sekarang'),
+              child: const Text('Tambah ke Keranjang'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade700,
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),

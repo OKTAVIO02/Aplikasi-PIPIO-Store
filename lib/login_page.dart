@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   final Function(String email) onLogin;
@@ -61,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                             border: Border.all(
-                              color: Colors.blue.shade700,
+                              color: const Color.fromARGB(255, 127, 25, 210),
                               width: 3,
                             ),
                           ),
@@ -84,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade700,
+                            color: const Color.fromARGB(255, 182, 13, 224),
                             letterSpacing: 1.2,
                           ),
                           textAlign: TextAlign.center,
@@ -144,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 String email = _emailController.text.trim();
                                 String password = _passController.text;
 
@@ -168,8 +169,33 @@ class _LoginPageState extends State<LoginPage> {
                                   return;
                                 }
 
-                                // Jika valid, panggil callback login
-                                widget.onLogin(email);
+                                // Cek apakah ada akun yang sudah terdaftar
+                                final prefs = await SharedPreferences.getInstance();
+                                String? savedEmail = prefs.getString('saved_email');
+                                String? savedPassword = prefs.getString('saved_password');
+
+                                if (savedEmail == null || savedPassword == null) {
+                                  // Belum ada akun — arahkan user ke register
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Belum ada akun terdaftar. Silakan daftar dulu.')),
+                                  );
+                                  Future.delayed(const Duration(milliseconds: 700), () {
+                                    widget.onRegister();
+                                  });
+                                  return;
+                                }
+
+                                // Validasi kredensial yang tersimpan
+                                if (email == savedEmail && password == savedPassword) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Login berhasil!')),
+                                  );
+                                  widget.onLogin(email);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Email atau password salah!')),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,

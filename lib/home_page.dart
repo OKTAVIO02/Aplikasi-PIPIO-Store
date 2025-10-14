@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+// Removed external dependencies (get, getwidget) to avoid analyzer issues
 import 'models/productmodel.dart';
 import 'models/categorymodel.dart';
 import 'product_detail_page.dart';
 import 'profile_page.dart';
+import 'cart_page.dart';
+import 'services/cart_service.dart';
 import 'category_detail_page.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+// getwidget removed - not used anymore
 
 class HomePage extends StatelessWidget {
   final String email;
@@ -12,7 +16,6 @@ class HomePage extends StatelessWidget {
 
   HomePage({super.key, required this.email, required this.onLogout});
 
-  // Daftar kategori
   final List<Category> categories = [
     Category(
       name: 'Kaos',
@@ -43,7 +46,6 @@ class HomePage extends StatelessWidget {
     ),
   ];
 
-  // Daftar produk per kategori
   final List<Product> kaosList = [
     Product(
       name: 'Kaos Polos Hitam',
@@ -71,7 +73,6 @@ class HomePage extends StatelessWidget {
       description: 'Jaket hoodie hangat dan stylish.',
       image: 'assets/jaket hoodie.png',
       price: 150000,
-
     ),
     Product(
       name: 'Jaket Bomber',
@@ -179,7 +180,7 @@ class HomePage extends StatelessWidget {
               child: ListTile(
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
+                  child: Image.asset(
                     p.image,
                     width: 60,
                     height: 60,
@@ -188,26 +189,20 @@ class HomePage extends StatelessWidget {
                 ),
                 title: Text(
                   p.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
                   p.info,
                   style: TextStyle(color: Colors.blue.shade700),
                 ),
-                trailing: ElevatedButton(
+                trailing: IconButton(
+                  icon: const Icon(Icons.shopping_cart_outlined, color: Colors.blue),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Berhasil membeli ${p.name}')),
-                    );
+                    CartService.instance.add(p);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${p.name} ditambahkan ke keranjang')));
                   },
-                  child: const Text('Beli'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade700,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
                 ),
+
                 onTap: () {
                   Navigator.push(
                     context,
@@ -229,10 +224,11 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Toko Baju'),
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: const Color.fromARGB(255, 126, 0, 230),
         actions: [
           IconButton(
             icon: const Icon(Icons.account_circle),
+            color: Colors.white,
             onPressed: () {
               Navigator.push(
                 context,
@@ -242,8 +238,34 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
+          ValueListenableBuilder<int>(
+            valueListenable: CartService.instance.countNotifier,
+            builder: (context, count, _) => Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const CartPage()));
+                  },
+                ),
+                if (count > 0)
+                  Positioned(
+                    right: 6,
+                    top: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                      child: Text('$count', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                    ),
+                  ),
+              ],
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
+            color: Colors.white,
             onPressed: onLogout,
           ),
         ],
@@ -251,15 +273,10 @@ class HomePage extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              'assets/bg_login.jpg',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('assets/bg_login.jpg', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.5),
-            ),
+            child: Container(color: Colors.black.withOpacity(0.5)),
           ),
           SingleChildScrollView(
             child: Column(
@@ -271,13 +288,9 @@ class HomePage extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.85),
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
                     ],
                   ),
                   child: Text(
@@ -291,20 +304,65 @@ class HomePage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  child: Text(
-                    'Menu Kategori',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
-                      letterSpacing: 1.2,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Menu Kategori',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade700,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // ErigoStore quick link card
+                      InkWell(
+                        onTap: () async {
+                          final uri = Uri.parse('https://erigostore.co.id/');
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Tidak dapat membuka situs')),
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Card(
+                          color: Colors.white.withOpacity(0.95),
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Image.asset('assets/logo.png', width: 48, height: 48),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text('Kunjungi ErigoStore', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      SizedBox(height: 4),
+                                      Text('Lihat koleksi lengkap di erigostore.co.id', style: TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.open_in_new, color: Colors.blue),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   childAspectRatio: 0.95,
                   children: [
@@ -319,6 +377,15 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: ValueListenableBuilder<int>(
+        valueListenable: CartService.instance.countNotifier,
+        builder: (context, count, _) => FloatingActionButton.extended(
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CartPage())),
+          label: Text('Keranjang${count > 0 ? ' ($count)' : ''}'),
+          icon: const Icon(Icons.shopping_cart),
+          backgroundColor: Colors.blue.shade700,
+        ),
       ),
     );
   }
@@ -345,7 +412,7 @@ class HomePage extends StatelessWidget {
           );
         },
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.85),
@@ -354,7 +421,7 @@ class HomePage extends StatelessWidget {
               BoxShadow(
                 color: Colors.blue.shade100.withOpacity(0.3),
                 blurRadius: 12,
-                offset: Offset(0, 6),
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -365,15 +432,10 @@ class HomePage extends StatelessWidget {
                 radius: 38,
                 backgroundColor: Colors.blue.shade50,
                 child: ClipOval(
-                  child: Image.asset(
-                    assetImage,
-                    width: 54,
-                    height: 54,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.asset(assetImage, width: 54, height: 54, fit: BoxFit.cover),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 title,
                 style: TextStyle(
@@ -383,13 +445,10 @@ class HomePage extends StatelessWidget {
                   letterSpacing: 1,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Lihat produk $title',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -397,4 +456,5 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
 }
