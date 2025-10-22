@@ -95,7 +95,7 @@ class _SplashPageState extends State<SplashPage> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade700,
+                            color: const Color.fromARGB(255, 3, 5, 7),
                             letterSpacing: 1.2,
                           ),
                           textAlign: TextAlign.center,
@@ -104,7 +104,7 @@ class _SplashPageState extends State<SplashPage> {
                         Text(
                           'Temukan Baju Impianmu di Sini',
                           style: TextStyle(
-                            color: Colors.blue.shade700.withOpacity(0.7),
+                            color: const Color.fromARGB(255, 3, 5, 7).withOpacity(0.7),
                             fontSize: 15,
                             fontStyle: FontStyle.italic,
                           ),

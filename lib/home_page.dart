@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// Removed external dependencies (get, getwidget) to avoid analyzer issues
 import 'models/productmodel.dart';
 import 'models/categorymodel.dart';
 import 'product_detail_page.dart';
@@ -228,7 +227,7 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.account_circle),
-            color: Colors.white,
+            color: const Color.fromARGB(255, 32, 31, 31),
             onPressed: () {
               Navigator.push(
                 context,
@@ -298,7 +297,7 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
+                      color: const Color.fromARGB(255, 17, 17, 17),
                     ),
                   ),
                 ),
@@ -312,7 +311,7 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
+                          color: const Color.fromARGB(255, 238, 240, 243),
                           letterSpacing: 1.2,
                         ),
                       ),

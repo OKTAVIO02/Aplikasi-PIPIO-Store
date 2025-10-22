@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 182, 13, 224),
+                            color: const Color.fromARGB(255, 0, 0, 0),
                             letterSpacing: 1.2,
                           ),
                           textAlign: TextAlign.center,
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Colors.blue.shade700, Colors.blueAccent],
+                                colors: [const Color.fromARGB(255, 40, 27, 224), Colors.blueAccent],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ),
@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                                 padding: const EdgeInsets.symmetric(vertical: 12),
                                 child: Text(
                                   'Login',
-                                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 21, 5, 56), fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -221,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             'Register',
                             style: TextStyle(
-                              color: Colors.blue.shade700,
+                              color: const Color.fromARGB(255, 4, 2, 32),
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                               letterSpacing: 1,

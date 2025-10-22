@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Center(
         child: Card(
-          color: Colors.white.withOpacity(0.93),
+          color: const Color.fromARGB(255, 251, 248, 255).withOpacity(0.93),
           elevation: 12,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 CircleAvatar(
                   radius: 38,
-                  backgroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 19, 18, 18),
                   child: ClipOval(
                     child: Image.asset(
                       widget.avatarAsset ?? 'assets/logo.png',
